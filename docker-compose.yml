@@ -1,0 +1,33 @@
+version: "3.8"
+services:
+  predictor:
+    build: ./predictor
+    ports:
+      - "5000:5000"
+    volumes:
+      - ./predictor:/app
+    # env_file:
+    #   - ./env/predictor.env
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    # env_file:
+    #   - ./env/backend.env
+    depends_on:
+      - predictor
+  frontend:
+    build: ./frontend
+    ports:
+      - "9000:9000"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    # env_file:
+    #   - ./env/backend.env
+    depends_on:
+      - predictor
+      - backend
