@@ -1,0 +1,75 @@
+version: "3.8"
+services:
+  predictor:
+    build: ./predictor
+    ports:
+      - "5000:5000"
+    restart: always
+    networks:
+      - stockstalker
+
+  backend:
+    build: ./backend
+    ports:
+      - "3000:3000"
+    volumes:
+      - /app/node_modules
+    restart: always
+    networks:
+      - stockstalker
+    depends_on:
+      - predictor
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "9000:9000"
+    volumes:
+      - /app/node_modules
+    restart: always
+    networks:
+      - stockstalker
+    depends_on:
+      - predictor
+      - backend
+
+  webserver:
+    image: nginx:mainline-alpine
+    container_name: webserver
+    restart: always
+    ports:
+      - "80:80"
+    volumes:
+      - web-root:/var/www/html
+      - ./nginx-conf:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+    depends_on:
+      - frontend
+    networks:
+      - stockstalker
+
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+    depends_on:
+      - webserver
+    command: certonly --webroot --webroot-path=/var/www/html --email starlightromero@protonmail.com --agree-tos --no-eff-email --staging -d stockstalker.tk -d www.stockstalker.tk
+
+volumes:
+  certbot-etc:
+  certbot-var:
+  web-root:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/redpill/stockstalker/views/
+      o: bind
+
+networks:
+  app-network:
+    driver: bridge
