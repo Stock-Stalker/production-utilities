@@ -6,3 +6,6 @@ start:
 
 stop:
 	docker-compose down
+
+start-prod:
+	docker-compose -f docker-compose.prod.yml up --build
