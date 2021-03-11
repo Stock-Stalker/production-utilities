@@ -2,23 +2,16 @@ version: "3.9"
 services:
   predictor:
     restart: always
-    build:
-      context: ./predictor
-      dockerfile: Dockerfile.dev
     container_name: predictor
-    volumes:
-      - ./predictor:/app
+    image: index.docker.io/starlightromero/stockstalker-predictor
     networks:
       - stockstalker-network
 
   backend:
     restart: always
-    build:
-      context: ./backend
-      dockerfile: Dockerfile.dev
     container_name: backend
+    image: index.docker.io/starlightromero/stockstalker-backend
     volumes:
-      - ./backend:/app
       - /app/node_modules
     networks:
       - stockstalker-network
@@ -27,12 +20,9 @@ services:
 
   frontend:
     restart: always
-    build:
-      context: ./frontend
-      dockerfile: Dockerfile.dev
     container_name: frontend
+    image: index.docker.io/starlightromero/stockstalker-frontend
     volumes:
-      - ./frontend:/app
       - /app/node_modules
     networks:
       - stockstalker-network
@@ -42,18 +32,49 @@ services:
 
   nginx:
     restart: always
-    build:
-      context: ./nginx
-      dockerfile: Dockerfile.dev
     container_name: nginx
+    image: index.docker.io/starlightromero/stockstalker-nginx
     ports:
-      - 8080:80
+      - 80:80
+    # volumes:
+    #   - web-root:/var/www/html
+    #   - ./nginx-conf:/etc/nginx/conf.d
+    #   - certbot-etc:/etc/letsencrypt
+    #   - certbot-var:/var/lib/letsencrypt
     networks:
       - stockstalker-network
     depends_on:
       - predictor
       - backend
       - frontend
+
+  watchtower:
+    image: containerrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.stock
+      - $HOME/.docker/config.json:/config.json
+    command: --interval 30
+
+#   certbot:
+#     image: certbot/certbot
+#     container_name: certbot
+#     volumes:
+#       - certbot-etc:/etc/letsencrypt
+#       - certbot-var:/var/lib/letsencrypt
+#       - web-root:/var/www/html
+#     depends_on:
+#       - nginx
+#     command: certonly --webroot --webroot-path=/var/www/html --email starlightromero@protonmail.com --agree-tos --no-eff-email --staging -d stockstalker.tk -d www.stockstalker.tk
+#
+# volumes:
+#   certbot-etc:
+#   certbot-var:
+#   web-root:
+#     driver: local
+#     driver_opts:
+#       type: none
+#       device: /home/redpill/stockstalker/views/
+#       o: bind
 
 networks:
   stockstalker-network:
