@@ -49,6 +49,7 @@ services:
       - frontend
 
   watchtower:
+    restart: always
     image: containrrr/watchtower
     container_name: watchtower
     volumes:
