@@ -50,6 +50,7 @@ services:
 
   watchtower:
     image: containrrr/watchtower
+    container_name: watchtower
     volumes:
       - /var/run/docker.sock:/var/run/docker.stock
       - $HOME/.docker/config.json:/config.json
