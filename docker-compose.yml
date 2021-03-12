@@ -32,11 +32,11 @@ services:
     image: index.docker.io/starlightromero/stockstalker-nginx
     ports:
       - 80:80
-    # volumes:
-    #   - web-root:/var/www/html
-    #   - ./nginx-conf:/etc/nginx/conf.d
-    #   - certbot-etc:/etc/letsencrypt
-    #   - certbot-var:/var/lib/letsencrypt
+    volumes:
+      - web-root:/var/www/html
+      - ./nginx-conf:/etc/nginx/conf.d
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
     networks:
       - stockstalker-network
     depends_on:
@@ -44,26 +44,26 @@ services:
       - backend
       - frontend
 
-#   certbot:
-#     image: certbot/certbot
-#     container_name: certbot
-#     volumes:
-#       - certbot-etc:/etc/letsencrypt
-#       - certbot-var:/var/lib/letsencrypt
-#       - web-root:/var/www/html
-#     depends_on:
-#       - nginx
-#     command: certonly --webroot --webroot-path=/var/www/html --email starlightromero@protonmail.com --agree-tos --no-eff-email --staging -d stockstalker.tk -d www.stockstalker.tk
-#
-# volumes:
-#   certbot-etc:
-#   certbot-var:
-#   web-root:
-#     driver: local
-#     driver_opts:
-#       type: none
-#       device: /home/redpill/stockstalker/views/
-#       o: bind
+  certbot:
+    image: certbot/certbot
+    container_name: certbot
+    volumes:
+      - certbot-etc:/etc/letsencrypt
+      - certbot-var:/var/lib/letsencrypt
+      - web-root:/var/www/html
+    depends_on:
+      - nginx
+    command: certonly --webroot --webroot-path=/var/www/html --email starlightromero@protonmail.com --agree-tos --no-eff-email --staging -d stockstalker.tk -d www.stockstalker.tk
+
+volumes:
+  certbot-etc:
+  certbot-var:
+  web-root:
+    driver: local
+    driver_opts:
+      type: none
+      device: /home/redpill/stockstalker/views/
+      o: bind
 
 networks:
   stockstalker-network:
