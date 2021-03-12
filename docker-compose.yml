@@ -11,8 +11,6 @@ services:
     restart: always
     container_name: backend
     image: index.docker.io/starlightromero/stockstalker-backend
-    volumes:
-      - /app/node_modules
     networks:
       - stockstalker-network
     depends_on:
@@ -22,8 +20,6 @@ services:
     restart: always
     container_name: frontend
     image: index.docker.io/starlightromero/stockstalker-frontend
-    volumes:
-      - /app/node_modules
     networks:
       - stockstalker-network
     depends_on:
