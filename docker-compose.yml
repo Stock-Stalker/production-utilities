@@ -34,6 +34,7 @@ services:
       - 80:80
       - 443:443
     volumes:
+      - ./data/nginx:/etc/nginx/conf.d
       - ./data/certbot/conf:/etc/letsencrypt
       - ./data/certbot/www:/var/www/certbot
     networks:
@@ -46,7 +47,7 @@ services:
 
   certbot:
     restart: always
-    image: certbot/certbot
+    image: certbot/certbot:v0.36.0
     container_name: certbot
     volumes:
       - ./data/certbot/conf:/etc/letsencrypt
