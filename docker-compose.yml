@@ -1,5 +1,16 @@
 version: "3.9"
 services:
+  mongo:
+    restart: always
+    container_name: mongo
+    image: mongo
+    volumes:
+      - data:/data/db
+    env_file:
+      - ./env/mongo.env
+    networks:
+      - stockstalker-network
+
   predictor:
     restart: always
     container_name: predictor
@@ -14,6 +25,7 @@ services:
     networks:
       - stockstalker-network
     depends_on:
+      - mongo
       - predictor
 
   frontend:
@@ -23,6 +35,7 @@ services:
     networks:
       - stockstalker-network
     depends_on:
+      - mongo
       - predictor
       - backend
 
@@ -35,6 +48,7 @@ services:
     networks:
       - stockstalker-network
     depends_on:
+      - mongo
       - predictor
       - backend
       - frontend
