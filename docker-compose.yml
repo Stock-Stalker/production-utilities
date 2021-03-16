@@ -1,19 +1,48 @@
 version: "3.9"
 services:
+  mongo:
+    restart: always
+    container_name: mongo
+    image: mongo
+    volumes:
+      - data:/data/db
+    env_file:
+      - ./env/mongo.env
+    networks:
+      - stockstalker-network
+
+  redis:
+    container_name: cache
+    image: redis:alpine
+    volumes:
+      - redis-data:/data/redis
+    networks:
+      - stockstalker-network
+    depends_on:
+      - mongo
+    command: ["redis-server", "--appendonly", "yes"]
+
   predictor:
     restart: always
     container_name: predictor
     image: index.docker.io/starlightromero/stockstalker-predictor
     networks:
       - stockstalker-network
+    depends_on:
+      - mongo
+      - redis
 
   backend:
     restart: always
     container_name: backend
     image: index.docker.io/starlightromero/stockstalker-backend
+    env_file:
+      - ./env/backend.env
     networks:
       - stockstalker-network
     depends_on:
+      - mongo
+      - redis
       - predictor
 
   frontend:
@@ -23,6 +52,8 @@ services:
     networks:
       - stockstalker-network
     depends_on:
+      - mongo
+      - redis
       - predictor
       - backend
 
@@ -35,9 +66,15 @@ services:
     networks:
       - stockstalker-network
     depends_on:
+      - mongo
+      - redis
       - predictor
       - backend
       - frontend
+
+volumes:
+  data:
+  redis-data:
 
 networks:
   stockstalker-network:

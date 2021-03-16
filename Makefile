@@ -11,13 +11,13 @@ start-prod :
 				docker-compose up -d
 
 debug :
-  			docker-compose -f docker-compose.dev.yml --verbose up
+				docker-compose -f docker-compose.dev.yml --verbose up
 
 debug-prod:
 				docker-compose --verbose up
 
 rm :
-  			docker container stop $(docker  ps –aq) && docker container rm $(docker ps –aq)
+				docker container stop $(docker  ps –aq) && docker container rm $(docker ps –aq)
 
 rmi :
 				docker rmi $(docker images -q)
@@ -30,10 +30,10 @@ start-watchtower :
                 --interval 30
 
 stop-watchtower :
-        docker stop watchtower
+				docker stop watchtower
 
 rm-watchtower :
-        docker rm watchtower
+				docker rm watchtower
 
 rmi-watchtower :
-        docker rmi containrrr/watchtower
+				docker rmi containrrr/watchtower
