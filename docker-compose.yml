@@ -49,6 +49,8 @@ services:
     restart: always
     container_name: frontend
     image: index.docker.io/starlightromero/stockstalker-frontend
+    env_file:
+      - ./env/frontend.env
     networks:
       - stockstalker-network
     depends_on:

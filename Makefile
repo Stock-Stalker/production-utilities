@@ -7,6 +7,12 @@ start :
 stop :
 				docker-compose down
 
+reload:
+				docker-compose down && docker-compose -f docker-compose.dev.yml up --build
+
+test :
+				docker-compose -f docker-compose.test.yml up --build
+
 start-prod :
 				docker-compose up -d
 
@@ -21,6 +27,12 @@ rm :
 
 rmi :
 				docker rmi $(docker images -q)
+
+start-frontend :
+				docker-compose -f docker-compose.frontend.yml up --build
+
+reload-frontend :
+				docker-compose down && docker-compose -f docker-compose.frontend.yml up --build
 
 start-watchtower :
         docker run -d \
