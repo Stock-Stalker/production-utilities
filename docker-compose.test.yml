@@ -1,7 +1,6 @@
 version: "3.9"
 services:
   mongo:
-    restart: always
     container_name: mongo
     image: mongo
     volumes:
@@ -22,16 +21,18 @@ services:
       - mongo
     command: ["redis-server", "--appendonly", "yes"]
 
-  backend-test:
-    restart: always
+  backend:
     build:
       context: ./backend
       dockerfile: Dockerfile.dev
+    container_name: backend
     volumes:
       - ./backend:/app
       - /app/node_modules
     env_file:
       - ./env/backend.env
+    networks:
+      - stockstalker-network
     depends_on:
       - mongo
       - redis
