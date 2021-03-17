@@ -7,6 +7,9 @@ start :
 stop :
 				docker-compose down
 
+test :
+				docker-compose -f docker-compose.test.yml up --build
+
 start-prod :
 				docker-compose up -d
 
