@@ -1,0 +1,46 @@
+version: "3.9"
+services:
+  mongo:
+    restart: always
+    container_name: mongo
+    image: mongo
+    volumes:
+      - data:/data/db
+    env_file:
+      - ./env/mongo.env
+    networks:
+      - stockstalker-network
+
+  redis:
+    container_name: cache
+    image: redis:alpine
+    volumes:
+      - redis-data:/data/redis
+    networks:
+      - stockstalker-network
+    depends_on:
+      - mongo
+    command: ["redis-server", "--appendonly", "yes"]
+
+  backend-test:
+    restart: always
+    build:
+      context: ./backend
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./backend:/app
+      - /app/node_modules
+    env_file:
+      - ./env/backend.env
+    depends_on:
+      - mongo
+      - redis
+    command: npm test
+
+volumes:
+  data:
+  redis-data:
+
+networks:
+  stockstalker-network:
+    driver: bridge
