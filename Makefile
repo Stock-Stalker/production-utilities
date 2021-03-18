@@ -31,11 +31,14 @@ start-prod :
 debug-prod:
 				docker-compose --verbose up
 
-rm :
-				docker container stop $(docker  ps –aq) && docker container rm $(docker ps –aq)
+prune :
+				docker container prune -f
+				
+image-prune :
+				docker images prune -f
 
 rmi :
-				docker rmi $(docker images -q)
+				docker rmi stockstalker_backend && docker rmi stockstalker_frontend && docker rmi stockstalker_predictor
 
 start-frontend :
 				docker-compose -f docker-compose.frontend.yml up --build
@@ -47,7 +50,7 @@ debug-frontend :
 				docker-compose -f docker-compose.frontend.yml --verbose up --build
 
 start-watchtower :
-        docker run -d \
+				docker run -d \
                 --name watchtower \
                 -v /var/run/docker.sock:/var/run/docker.sock \
                 containrrr/watchtower \
