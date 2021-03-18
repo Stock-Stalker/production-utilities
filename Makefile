@@ -18,6 +18,12 @@ test :
 
 lint :
 				cd backend && npm run lint && cd ../frontend && npm run lint && cd ..
+				
+lint-frontend :
+				cd ../frontend && npm run lint && cd ..
+				
+lint-backend:
+				cd backend && npm run lint && cd ..
 
 start-prod :
 				docker-compose up -d
