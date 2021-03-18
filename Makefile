@@ -16,8 +16,8 @@ reload:
 test :
 				docker-compose -f docker-compose.test.yml up --build
 
-format :
-				cd backend && npm run format && cd ../frontend && npm run format && cd ..
+lint :
+				cd backend && npm run lint && cd ../frontend && npm run lint && cd ..
 
 start-prod :
 				docker-compose up -d
