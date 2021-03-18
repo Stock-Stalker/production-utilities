@@ -6,6 +6,9 @@ start :
 
 stop :
 				docker-compose down
+				
+debug :
+				docker-compose -f docker-compose.dev.yml --verbose up
 
 reload:
 				docker-compose down && docker-compose -f docker-compose.dev.yml up --build
@@ -13,11 +16,11 @@ reload:
 test :
 				docker-compose -f docker-compose.test.yml up --build
 
+format :
+				cd backend && npm run format && cd ../frontend && npm run format && cd ..
+
 start-prod :
 				docker-compose up -d
-
-debug :
-				docker-compose -f docker-compose.dev.yml --verbose up
 
 debug-prod:
 				docker-compose --verbose up
@@ -33,6 +36,9 @@ start-frontend :
 
 reload-frontend :
 				docker-compose down && docker-compose -f docker-compose.frontend.yml up --build
+				
+debug-frontend :
+				docker-compose -f docker-compose.frontend.yml --verbose up --build
 
 start-watchtower :
         docker run -d \
