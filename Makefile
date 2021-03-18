@@ -2,7 +2,7 @@ build :
 				docker-compose -f docker-compose.dev.yml build
 
 start :
-				docker-compose -f docker-compose.dev.yml up --build
+				docker-compose -f docker-compose.dev.yml up
 
 stop :
 				docker-compose down
@@ -11,10 +11,10 @@ debug :
 				docker-compose -f docker-compose.dev.yml --verbose up
 
 reload:
-				docker-compose down && docker-compose -f docker-compose.dev.yml up --build
+				docker-compose down && docker-compose -f docker-compose.dev.yml up
 
 test :
-				docker-compose -f docker-compose.test.yml up --build
+				docker-compose -f docker-compose.test.yml up
 
 lint :
 				cd backend && npm run lint && cd ../frontend && npm run lint && cd ..
@@ -39,15 +39,18 @@ image-prune :
 
 rmi :
 				docker rmi stockstalker_backend && docker rmi stockstalker_frontend && docker rmi stockstalker_predictor
+				
+build-frontend :
+				docker-compose -f docker-compose.frontend.yml build
 
 start-frontend :
-				docker-compose -f docker-compose.frontend.yml up --build
+				docker-compose -f docker-compose.frontend.yml up
 
 reload-frontend :
-				docker-compose down && docker-compose -f docker-compose.frontend.yml up --build
+				docker-compose down && docker-compose -f docker-compose.frontend.yml up
 				
 debug-frontend :
-				docker-compose -f docker-compose.frontend.yml --verbose up --build
+				docker-compose -f docker-compose.frontend.yml --verbose up
 
 start-watchtower :
 				docker run -d \
