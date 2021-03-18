@@ -1,32 +1,61 @@
 version: "3.9"
 services:
+  mongo:
+    restart: always
+    container_name: mongo
+    image: mongo
+    volumes:
+      - data:/data/db
+    env_file:
+      - ./env/mongo.env
+    networks:
+      - stockstalker-network
+
+  redis:
+    container_name: cache
+    image: redis:alpine
+    volumes:
+      - redis-data:/data/redis
+    networks:
+      - stockstalker-network
+    depends_on:
+      - mongo
+    command: ["redis-server", "--appendonly", "yes"]
+
   predictor:
     restart: always
     container_name: predictor
     image: index.docker.io/starlightromero/stockstalker-predictor
     networks:
       - stockstalker-network
+    depends_on:
+      - mongo
+      - redis
 
   backend:
     restart: always
     container_name: backend
     image: index.docker.io/starlightromero/stockstalker-backend
-    volumes:
-      - /app/node_modules
+    env_file:
+      - ./env/backend.env
     networks:
       - stockstalker-network
     depends_on:
+      - mongo
+      - redis
       - predictor
 
   frontend:
     restart: always
     container_name: frontend
     image: index.docker.io/starlightromero/stockstalker-frontend
-    volumes:
-      - /app/node_modules
+    env_file:
+      - ./env/frontend.env
     networks:
       - stockstalker-network
     depends_on:
+      - mongo
+      - redis
       - predictor
       - backend
 
@@ -36,46 +65,18 @@ services:
     image: index.docker.io/starlightromero/stockstalker-nginx
     ports:
       - 80:80
-    # volumes:
-    #   - web-root:/var/www/html
-    #   - ./nginx-conf:/etc/nginx/conf.d
-    #   - certbot-etc:/etc/letsencrypt
-    #   - certbot-var:/var/lib/letsencrypt
     networks:
       - stockstalker-network
     depends_on:
+      - mongo
+      - redis
       - predictor
       - backend
       - frontend
 
-  watchtower:
-    image: containrrr/watchtower
-    container_name: watchtower
-    volumes:
-      - /var/run/docker.sock:/var/run/docker.stock
-      - $HOME/.docker/config.json:/config.json
-    command: --interval 30
-
-#   certbot:
-#     image: certbot/certbot
-#     container_name: certbot
-#     volumes:
-#       - certbot-etc:/etc/letsencrypt
-#       - certbot-var:/var/lib/letsencrypt
-#       - web-root:/var/www/html
-#     depends_on:
-#       - nginx
-#     command: certonly --webroot --webroot-path=/var/www/html --email starlightromero@protonmail.com --agree-tos --no-eff-email --staging -d stockstalker.tk -d www.stockstalker.tk
-#
-# volumes:
-#   certbot-etc:
-#   certbot-var:
-#   web-root:
-#     driver: local
-#     driver_opts:
-#       type: none
-#       device: /home/redpill/stockstalker/views/
-#       o: bind
+volumes:
+  data:
+  redis-data:
 
 networks:
   stockstalker-network:
