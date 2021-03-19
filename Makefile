@@ -20,7 +20,7 @@ lint :
 				cd backend && npm run lint && cd ../frontend && npm run lint && cd ..
 				
 lint-frontend :
-				cd ../frontend && npm run lint && cd ..
+				cd frontend && npm run lint && cd ..
 				
 lint-backend:
 				cd backend && npm run lint && cd ..
