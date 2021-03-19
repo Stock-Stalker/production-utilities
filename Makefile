@@ -1,5 +1,5 @@
 build :
-				docker-compose -f docker-compose.dev.yml build
+				docker-compose -f docker-compose.dev.yml build --force-rm --no-cache
 
 start :
 				docker-compose -f docker-compose.dev.yml up
@@ -20,7 +20,7 @@ lint :
 				cd backend && npm run lint && cd ../frontend && npm run lint && cd ..
 				
 lint-frontend :
-				cd ../frontend && npm run lint && cd ..
+				cd frontend && npm run lint && cd ..
 				
 lint-backend:
 				cd backend && npm run lint && cd ..
@@ -38,7 +38,7 @@ image-prune :
 				docker images prune -f
 
 rmi :
-				docker rmi stockstalker_backend && docker rmi stockstalker_frontend && docker rmi stockstalker_predictor
+				docker rmi stockstalker_backend & docker rmi stockstalker_frontend & docker rmi stockstalker_predictor & docker rmi stockstalker_nginx
 				
 build-frontend :
 				docker-compose -f docker-compose.frontend.yml build
