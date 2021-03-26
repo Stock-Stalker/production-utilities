@@ -1,61 +1,85 @@
-version: "3.9"
+version: '3.9'
 services:
-  predictor:
-    restart: always
-    container_name: predictor
-    image: index.docker.io/starlightromero/stockstalker-predictor
-    networks:
-      - stockstalker-network
+    mongo:
+        restart: always
+        container_name: mongo
+        image: mongo
+        volumes:
+            - data:/data/db
+        env_file:
+            - ./env/mongo.env
+        networks:
+            - stockstalker-network
 
-  backend:
-    restart: always
-    container_name: backend
-    image: index.docker.io/starlightromero/stockstalker-backend
-    networks:
-      - stockstalker-network
-    depends_on:
-      - predictor
+    redis:
+        container_name: cache
+        image: redis:alpine
+        volumes:
+            - redis-data:/data/redis
+        networks:
+            - stockstalker-network
+        depends_on:
+            - mongo
+        command: ['redis-server', '--appendonly', 'yes']
 
-  frontend:
-    restart: always
-    container_name: frontend
-    image: index.docker.io/starlightromero/stockstalker-frontend
-    networks:
-      - stockstalker-network
-    depends_on:
-      - predictor
-      - backend
+    predictor:
+        restart: always
+        container_name: predictor
+        image: index.docker.io/starlightromero/stockstalker-predictor
+        env_file:
+            - ./env/predictor.env
+        networks:
+            - stockstalker-network
+        depends_on:
+            - mongo
+            - redis
 
-  nginx:
-    restart: always
-    container_name: nginx
-    image: index.docker.io/starlightromero/stockstalker-nginx
-    ports:
-      - 80:80
-      - 443:443
-    volumes:
-      - ./data/nginx:/etc/nginx/conf.d
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-    networks:
-      - stockstalker-network
-    depends_on:
-      - predictor
-      - backend
-      - frontend
-    command: "/bin/sh -c 'while :; do sleep 6h & wait $${!}; nginx -s reload; done & nginx -g \"daemon off;\"'"
+    backend:
+        restart: always
+        container_name: backend
+        image: index.docker.io/starlightromero/stockstalker-backend
+        env_file:
+            - ./env/backend.env
+        networks:
+            - stockstalker-network
+        depends_on:
+            - mongo
+            - redis
+            - predictor
 
-  certbot:
-    restart: always
-    image: certbot/certbot:v0.36.0
-    container_name: certbot
-    volumes:
-      - ./data/certbot/conf:/etc/letsencrypt
-      - ./data/certbot/www:/var/www/certbot
-    depends_on:
-      - nginx
-    entrypoint: "/bin/sh -c 'trap exit TERM; while :; do certbot renew; sleep 6h & wait $${!}; done;'"
+    frontend:
+        restart: always
+        container_name: frontend
+        image: index.docker.io/starlightromero/stockstalker-frontend
+        env_file:
+            - ./env/frontend.env
+        networks:
+            - stockstalker-network
+        depends_on:
+            - mongo
+            - redis
+            - predictor
+            - backend
+
+    nginx:
+        restart: always
+        container_name: nginx
+        image: index.docker.io/starlightromero/stockstalker-nginx
+        ports:
+            - 80:80
+        networks:
+            - stockstalker-network
+        depends_on:
+            - mongo
+            - redis
+            - predictor
+            - backend
+            - frontend
+
+volumes:
+    data:
+    redis-data:
 
 networks:
-  stockstalker-network:
-    driver: bridge
+    stockstalker-network:
+        driver: bridge
