@@ -81,13 +81,6 @@ services:
             - backend
             - frontend
 
-    certbot:
-        restart: always
-        image: certbot/dns-digitalocean
-        volumes:
-            - ./data/certbot/conf:/etc/letsencrypt
-            - ./data/certbot/www:/var/www/certbot
-
 volumes:
     data:
     redis-data:
