@@ -17,7 +17,7 @@ build-test :
 				docker-compose -f docker-compose.test.yml build
 
 test :
-				docker-compose -f docker-compose.test.yml up
+				docker-compose -f docker-compose.test.yml up --exit-code-from test
 				
 reload-test :
 				docker-compose down && docker-compose -f docker-compose.test.yml up
