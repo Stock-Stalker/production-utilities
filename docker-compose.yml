@@ -68,6 +68,7 @@ services:
         ports:
             - 80:80
         volumes:
+            - ./data/nginx:/etc/nginx/conf.d
             - ./data/certbot/conf:/etc/letsencrypt
             - ./data/certbot/www:/var/www/certbot
         networks:
