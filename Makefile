@@ -13,8 +13,14 @@ debug :
 reload:
 				docker-compose down && docker-compose -f docker-compose.dev.yml up
 
+build-test :
+				docker-compose -f docker-compose.test.yml build
+
 test :
-				docker-compose -f docker-compose.test.yml up
+				docker-compose -f docker-compose.test.yml up --exit-code-from backend
+				
+reload-test :
+				docker-compose down && docker-compose -f docker-compose.test.yml up
 
 lint :
 				cd backend && npm run lint && cd ../frontend && npm run lint && cd ..
