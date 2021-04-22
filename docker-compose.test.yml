@@ -1,15 +1,5 @@
 version: "3.9"
 services:
-  mongo:
-    container_name: mongo
-    image: mongo
-    volumes:
-      - data:/data/db
-    env_file:
-      - ./env/mongo.env
-    networks:
-      - stockstalker-network
-
   redis:
     container_name: cache
     image: redis:alpine
@@ -17,8 +7,6 @@ services:
       - redis-data:/data/redis
     networks:
       - stockstalker-network
-    depends_on:
-      - mongo
     command: ["redis-server", "--appendonly", "yes"]
 
   backend:
@@ -34,12 +22,10 @@ services:
     networks:
       - stockstalker-network
     depends_on:
-      - mongo
       - redis
     command: npm test
 
 volumes:
-  data:
   redis-data:
 
 networks:
