@@ -20,10 +20,10 @@ test :
 				docker-compose -f docker-compose.test.yml up --abort-on-container-exit
 				
 reload-test :
-				docker-compose down && docker-compose -f docker-compose.test.yml up
+				docker-compose down && docker-compose -f docker-compose.test.yml up --abort-on-container-exit
 
 hard-reload-test :
-				docker-compose down && docker rmi stockstalker_backend && docker-compose -f docker-compose.test.yml up
+				docker-compose down && docker rmi stockstalker_backend && docker-compose -f docker-compose.test.yml up --abort-on-container-exit
 
 lint :
 				cd backend && npm run lint && cd ../frontend && npm run lint && cd ..
