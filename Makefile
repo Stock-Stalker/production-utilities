@@ -17,10 +17,13 @@ build-test :
 				docker-compose -f docker-compose.test.yml build
 
 test :
-				docker-compose -f docker-compose.test.yml up --exit-code-from backend
+				docker-compose -f docker-compose.test.yml up --abort-on-container-exit
 				
 reload-test :
 				docker-compose down && docker-compose -f docker-compose.test.yml up
+
+hard-reload-test :
+				docker-compose down && docker rmi stockstalker_backend && docker-compose -f docker-compose.test.yml up
 
 lint :
 				cd backend && npm run lint && cd ../frontend && npm run lint && cd ..
