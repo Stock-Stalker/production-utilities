@@ -22,6 +22,9 @@ test :
 reload-test :
 				docker-compose down && docker-compose -f docker-compose.test.yml up
 
+security-test:
+				cd backend && snyk test && cd ../frontend && snyk test && cd ..
+
 lint :
 				cd backend && npm run lint && cd ../frontend && npm run lint && cd ..
 				
@@ -42,9 +45,15 @@ prune :
 				
 image-prune :
 				docker images prune -f
+				
+rm-all:
+				docker stop $$(docker ps -aq) && docker rm $$(docker ps -aq)
 
 rmi :
 				docker rmi stockstalker_backend & docker rmi stockstalker_frontend & docker rmi stockstalker_predictor & docker rmi stockstalker_nginx
+				
+rmi-all:
+				docker rmi $$(docker images -q)
 				
 build-frontend :
 				docker-compose -f docker-compose.frontend.yml build
