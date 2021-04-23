@@ -47,13 +47,13 @@ image-prune :
 				docker images prune -f
 				
 rm-all:
-				docker stop $(docker ps -aq) && docker rm $(docker ps -aq)
+				docker stop $$(docker ps -aq) && docker rm $$(docker ps -aq)
 
 rmi :
 				docker rmi stockstalker_backend & docker rmi stockstalker_frontend & docker rmi stockstalker_predictor & docker rmi stockstalker_nginx
 				
 rmi-all:
-				docker rmi $(docker images -q)
+				docker rmi $$(docker images -q)
 				
 build-frontend :
 				docker-compose -f docker-compose.frontend.yml build
