@@ -17,10 +17,13 @@ build-test :
 				docker-compose -f docker-compose.test.yml build
 
 test :
-				docker-compose -f docker-compose.test.yml up --exit-code-from backend
+				docker-compose -f docker-compose.test.yml up --abort-on-container-exit
 				
 reload-test :
-				docker-compose down && docker-compose -f docker-compose.test.yml up
+				docker-compose down && docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+
+hard-reload-test :
+				docker-compose down && docker rmi stockstalker_backend && docker-compose -f docker-compose.test.yml up --abort-on-container-exit
 
 security-test:
 				cd backend && snyk test && cd ../frontend && snyk test && cd ..
