@@ -17,10 +17,16 @@ build-test :
 				docker-compose -f docker-compose.test.yml build
 
 test :
-				docker-compose -f docker-compose.test.yml up --exit-code-from backend
+				docker-compose -f docker-compose.test.yml up --abort-on-container-exit
 				
 reload-test :
-				docker-compose down && docker-compose -f docker-compose.test.yml up
+				docker-compose down && docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+
+hard-reload-test :
+				docker-compose down && docker rmi stockstalker_backend && docker-compose -f docker-compose.test.yml up --abort-on-container-exit
+
+security-test:
+				cd backend && snyk test && cd ../frontend && snyk test && cd ..
 
 lint :
 				cd backend && npm run lint && cd ../frontend && npm run lint && cd ..
@@ -42,9 +48,15 @@ prune :
 				
 image-prune :
 				docker images prune -f
+				
+rm-all:
+				docker stop $$(docker ps -aq) && docker rm $$(docker ps -aq)
 
 rmi :
 				docker rmi stockstalker_backend & docker rmi stockstalker_frontend & docker rmi stockstalker_predictor & docker rmi stockstalker_nginx
+				
+rmi-all:
+				docker rmi $$(docker images -q)
 				
 build-frontend :
 				docker-compose -f docker-compose.frontend.yml build
