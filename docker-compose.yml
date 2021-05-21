@@ -1,71 +1,81 @@
-version: '3.9'
+version: "3.9"
 services:
-    redis:
-        container_name: cache
-        image: redis:alpine
-        volumes:
-            - redis-data:/data/redis
-        networks:
-            - stockstalker-network
-        command: ['redis-server', '--appendonly', 'yes']
+  redis:
+    container_name: cache
+    image: redis:alpine
+    volumes:
+      - redis-data:/data/redis
+    networks:
+      - stockstalker-network
+    command: ['redis-server', '--appendonly', 'yes']
 
-    predictor:
-        restart: always
-        container_name: predictor
-        image: index.docker.io/starlightromero/stockstalker-predictor
-        env_file:
-            - ./env/predictor.env
-        networks:
-            - stockstalker-network
-        depends_on:
-            - redis
+  predictor:
+    restart: always
+    container_name: predictor
+    image: index.docker.io/starlightromero/stockstalker-predictor
+    env_file:
+      - ./env/predictor.env
+    networks:
+      - stockstalker-network
 
-    backend:
-        restart: always
-        container_name: backend
-        image: index.docker.io/starlightromero/stockstalker-backend
-        env_file:
-            - ./env/backend.env
-        networks:
-            - stockstalker-network
-        depends_on:
-            - redis
-            - predictor
+  robinhood:
+    restart: always
+    container_name: robinhood
+    image: index.docker.io/starlightromero/stockstalker-robinhood
+    env_file:
+      - ./env/robinhood.env
+    networks:
+      - stockstalker-network
 
-    frontend:
-        restart: always
-        container_name: frontend
-        image: index.docker.io/starlightromero/stockstalker-frontend
-        env_file:
-            - ./env/frontend.env
-        networks:
-            - stockstalker-network
-        depends_on:
-            - redis
-            - predictor
-            - backend
+  backend:
+    restart: always
+    container_name: backend
+    image: index.docker.io/starlightromero/stockstalker-backend
+    env_file:
+      - ./env/backend.env
+    networks:
+      - stockstalker-network
+    depends_on:
+      - redis
+      - predictor
+      - robinhood
 
-    nginx:
-        restart: always
-        container_name: nginx
-        image: index.docker.io/starlightromero/stockstalker-nginx
-        ports:
-            - 80:80
-            - 443:443
-        volumes:
-            - /root/certs-data/:/data/letsencrypt/
-            - /etc/letsencrypt/:/etc/letsencrypt/
-        networks:
-            - stockstalker-network
-        depends_on:
-            - redis
-            - predictor
-            - backend
-            - frontend
+  frontend:
+    restart: always
+    container_name: frontend
+    image: index.docker.io/starlightromero/stockstalker-frontend
+    env_file:
+      - ./env/frontend.env
+    networks:
+      - stockstalker-network
+    depends_on:
+      - redis
+      - predictor
+      - robinhood
+      - backend
+
+  nginx:
+    restart: always
+    container_name: nginx
+    image: index.docker.io/starlightromero/stockstalker-nginx
+    ports:
+      - 80:80
+      - 443:443
+    volumes:
+      - /root/certs-data/:/data/letsencrypt/
+      - /etc/letsencrypt/:/etc/letsencrypt/
+    networks:
+      - stockstalker-network
+    depends_on:
+      - redis
+      - predictor
+      - robinhood
+      - backend
+      - frontend
 
 volumes:
-    redis-data:
+  redis-data:
 
 networks:
-    stockstalker-network:
-        driver: bridge
+  stockstalker-network:
+    driver: bridge
