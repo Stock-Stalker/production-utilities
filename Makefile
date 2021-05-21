@@ -1,47 +1,17 @@
 build :
-				docker-compose -f docker-compose.dev.yml build --force-rm --no-cache
+				docker-compose build --force-rm --no-cache
 
 start :
-				docker-compose -f docker-compose.dev.yml up
+				docker-compose up -d
 
 stop :
 				docker-compose down
 				
 debug :
-				docker-compose -f docker-compose.dev.yml --verbose up
+				docker-compose --verbose up
 
 reload:
-				docker-compose down && docker-compose -f docker-compose.dev.yml up
-
-build-test :
-				docker-compose -f docker-compose.test.yml build
-
-test :
-				docker-compose -f docker-compose.test.yml up --abort-on-container-exit
-				
-reload-test :
-				docker-compose down && docker-compose -f docker-compose.test.yml up --abort-on-container-exit
-
-hard-reload-test :
-				docker-compose down && docker rmi stockstalker_backend && docker-compose -f docker-compose.test.yml up --abort-on-container-exit
-
-security-test:
-				cd backend && snyk test && cd ../frontend && snyk test && cd ..
-
-lint :
-				cd backend && npm run lint && cd ../frontend && npm run lint && cd ..
-				
-lint-frontend :
-				cd frontend && npm run lint && cd ..
-				
-lint-backend:
-				cd backend && npm run lint && cd ..
-
-start-prod :
-				docker-compose up -d
-
-debug-prod:
-				docker-compose --verbose up
+				docker-compose down && docker-compose up
 
 prune :
 				docker container prune -f
@@ -53,22 +23,10 @@ rm-all:
 				docker stop $$(docker ps -aq) && docker rm $$(docker ps -aq)
 
 rmi :
-				docker rmi stockstalker_backend & docker rmi stockstalker_frontend & docker rmi stockstalker_predictor & docker rmi stockstalker_nginx
-				
+				docker rmi stockstalker_backend & docker rmi stockstalker_frontend & docker rmi stockstalker_predictor & docker rmi stockstalker_robinhood & docker rmi stockstalker_nginx
+
 rmi-all:
 				docker rmi $$(docker images -q)
-				
-build-frontend :
-				docker-compose -f docker-compose.frontend.yml build
-
-start-frontend :
-				docker-compose -f docker-compose.frontend.yml up
-
-reload-frontend :
-				docker-compose down && docker-compose -f docker-compose.frontend.yml up
-				
-debug-frontend :
-				docker-compose -f docker-compose.frontend.yml --verbose up
 
 start-watchtower :
 				docker run -d \
