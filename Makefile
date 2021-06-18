@@ -1,17 +1,18 @@
+compose = docker-compose
+
 build :
-				docker-compose build --force-rm --no-cache
+				${compose} build --force-rm --no-cache
 
 start :
-				docker-compose up -d
+				${compose} up -d
 
 stop :
-				docker-compose down
+				${compose} down
 				
 debug :
-				docker-compose --verbose up
+				${compose} --verbose up
 
-reload:
-				docker-compose down && docker-compose up
+reload: stop start
 
 prune :
 				docker container prune -f
@@ -33,7 +34,8 @@ start-watchtower :
                 --name watchtower \
                 -v /var/run/docker.sock:/var/run/docker.sock \
                 containrrr/watchtower \
-                --interval 30
+                --interval 30 \
+				--cleanup
 
 stop-watchtower :
 				docker stop watchtower
