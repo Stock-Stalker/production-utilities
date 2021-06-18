@@ -18,8 +18,8 @@
     <img src="https://img.shields.io/github/issues/Stock-Stalker/production-utilities" />
     <!-- pull requests -->
     <img src="https://img.shields.io/github/issues-pr/Stock-Stalker/production-utilities" />
-    <!-- number of commits per month -->
-    <img src="https://img.shields.io/github/commit-activity/m/Stock-Stalker/production-utilities" />
+    <!-- number of commits per year -->
+    <img src="https://img.shields.io/github/commit-activity/y/Stock-Stalker/production-utilities" />
     <!-- last commit -->
     <img src="https://img.shields.io/github/last-commit/Stock-Stalker/production-utilities" />
 </p>
